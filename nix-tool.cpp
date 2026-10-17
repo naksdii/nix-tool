@@ -11,13 +11,27 @@
 #include <limits.h>
 #include <sys/stat.h>
 
-#ifndef FLAKE_PATH
-#define FLAKE_PATH "/home/naksdii/Nixos"
-#endif
+#include <iostream>
+#include <string>
+#include <cstdlib> // Para getenv
 
-#ifndef HIST_FILE
-#define HIST_FILE "hist.log"
-#endif
+// Função para descobrir o caminho do NixOS dinamicamente em tempo de execução
+std::string get_flake_path() {
+    // 1. Se o usuário definiu uma variável de ambiente customizada, usa ela
+    const char* custom_path = std::getenv("NIX_FLAKE_PATH");
+    if (custom_path != nullptr) {
+        return std::string(custom_path);
+    }
+
+    // 2. Senão, pega o HOME atual do usuário e aponta para a pasta Nixos
+    const char* home = std::getenv("HOME");
+    if (home != nullptr) {
+        return std::string(home) + "/Nixos";
+    }
+
+    // 3. Fallback final seguro
+    return "./Nixos";
+}
 
 // Função segura para executar comandos sem invocar o shell (/bin/sh)
 int run_command(const std::vector<std::string>& args) {
@@ -281,7 +295,7 @@ int main(int argc, char* argv[]) {
     }
 
     std::string command = argv[1];
-    std::string flake_path = FLAKE_PATH;
+    std::string flake_path = get_flake_path();
 
     if (command == "rebuild") {
         cmd_rebuild(flake_path);
