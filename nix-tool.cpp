@@ -14,7 +14,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib> // Para getenv
-
+#define HIST_FILE "nixos-rebuild.log"
 // Função para descobrir o caminho do NixOS dinamicamente em tempo de execução
 std::string get_flake_path() {
     // 1. Se o usuário definiu uma variável de ambiente customizada, usa ela
