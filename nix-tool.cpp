@@ -15,6 +15,8 @@
 #include <string>
 #include <cstdlib> // Para getenv
 #define HIST_FILE "nixos-rebuild.log"
+
+std::string flake_path;
 // Função para descobrir o caminho do NixOS dinamicamente em tempo de execução
 std::string get_flake_path() {
     // 1. Se o usuário definiu uma variável de ambiente customizada, usa ela
@@ -95,7 +97,7 @@ std::string get_current_generation() {
 
 // Grava no log
 void append_log(const std::string& system_path, const std::string& commit_msg, const std::string& status) {
-    std::ofstream log_file(HIST_FILE, std::ios::app);
+    std::ofstream log_file(flake_path + "/" + HIST_FILE, std::ios::app);
     if (log_file.is_open()) {
         log_file << get_current_timestamp() << " " 
                  << system_path << ": " 
@@ -295,7 +297,7 @@ int main(int argc, char* argv[]) {
     }
 
     std::string command = argv[1];
-    std::string flake_path = get_flake_path();
+    flake_path = get_flake_path();
 
     if (command == "rebuild") {
         cmd_rebuild(flake_path);
